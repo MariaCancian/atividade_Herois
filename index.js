@@ -20,7 +20,19 @@ app.get("/", (req, res) => {
     res.end("a rota funcionando!🚀");
   });
 
-  //
+  //rota que tem todos
+  app.get("/herois", async (req, res) => {
+    try {
+      const resultado = await pool.query("SELECT * FROM herois");
+      res.json({
+        total: resultado.rowCount,
+        bruxo: resultado.rows,
+      });
+    } catch (error) {
+      console.error("Erro ao obter todos os herois", error);
+      res.status(500).send("Erro ao obter todos os herois");
+    }
+  });
  
 
   app.listen(PORT, () => {
