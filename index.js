@@ -33,6 +33,19 @@ app.get("/", (req, res) => {
       res.status(500).send("Erro ao obter todos os herois");
     }
   });
+
+  //rota que cria herois
+
+  app.post('/herois', async (req, res) => {
+    try {
+      const { nome, poder, nivel, pontos_de_vida } = req.body;
+      await pool.query('INSERT INTO herois (nome, poder, nivel, pontos_de_vida) VALUES ($1, $2, $3,$4)', [nome, poder, nivel, pontos_de_vida]);
+      res.status(201).send({ mensagem: 'heroi adicionado com sucesso'});
+    } catch (error) {
+      console.error('Erro ao adicionar herois:', error);
+      res.status(500).send('Erro ao adicionar herois');
+    }
+  });
  
 
   app.listen(PORT, () => {
