@@ -46,6 +46,33 @@ app.get("/", (req, res) => {
       res.status(500).send('Erro ao adicionar herois');
     }
   });
+
+  //rota para deletar heroi
+  app.delete("/herois/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await pool.query("DELETE FROM herois WHERE id = $1", [id]);
+      res.status(200).send({ mensagem: "herois deletado" });
+    } catch (error) {
+      console.error("Erro ao apagar o herois", error);
+      res.status(500).send("erro ao apagar herois");
+    }
+  });
+
+  //rota de editar herois
+  app.put('/herois/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, poder, nivel, pontos_de_vida } = req.body;
+        await pool.query('UPDATE herois SET nome = $1, poder = $2, nivel = $3, pontos_de_vida = $4 WHERE id = $5', [nome, poder, nivel, pontos_de_vida, id]);
+        res.status(200).send({ mensagem: 'heroi atualizado com sucesso' });
+    } catch (error) {
+        console.error('Erro ao atualizar heroi:', error);
+        res.status(500).send('Erro ao atualizar heroi');
+    }
+});
+
+
  
 
   app.listen(PORT, () => {
