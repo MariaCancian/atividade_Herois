@@ -11,4 +11,4 @@
          pontos_de_vida INT NOT NULL
          
         
-)       ;
+);
