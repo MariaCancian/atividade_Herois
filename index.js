@@ -87,47 +87,67 @@ app.put("/herois/:id", async (req, res) => {
 
 app.get("/batalha", async (req, res) => {
   try {
-
- //criação de variavel  para armazenar heroi 
+    // Criação de variáveis para armazenar os IDs dos heróis
     const { heroi1_id, heroi2_id } = req.query;
 
-    //se id não for fornecido não ira ser adicionada
-
-    if (!heroi1_id || !heroi2_id) { return res
-        .status(400)
-        .json({ mensagem: "IDs dos heróis não fornecidos" });
+    // Se os IDs não forem fornecidos, retorna um erro 400
+    if (!heroi1_id || !heroi2_id) {
+      return res.status(400).json({ mensagem: "IDs dos heróis não fornecidos" });
     }
 
-    //pegandos os dados dos herois atraves do id fornecido
+    // Pegando os dados dos heróis através dos IDs fornecidos
     const heroi1 = await heroiPorId(heroi1_id);
     const heroi2 = await heroiPorId(heroi2_id);
 
-    //para ver se heroi foi encontrado
+    // Verifica se os heróis foram encontrados
     if (!heroi1 || !heroi2) {
       return res.status(404).json({ mensagem: "Heróis não encontrados" });
     }
 
-    //logica do vencedor
-    let vencedor;
-    //se heroi 1, for maior que heroi 2, o vencedor será heroi 1
+    // Lógica para determinar o vencedor
+    let vencedorId;
     if (heroi1.nivel > heroi2.nivel) {
-      vencedor = heroi1;
-
-      // e se heroi 2 for maior que heroi 1 o vencedor sera heroi 2
+      vencedorId = heroi1_id;
     } else if (heroi2.nivel > heroi1.nivel) {
-      vencedor = heroi2;
+      vencedorId = heroi2_id;
     } else {
-      // Em caso de empate, selecione um vencedor aleatório
-      vencedor = Math.random() < 0.5 ? heroi1 : heroi2;
+      // Em caso de empate de nível, seleciona o herói com mais pontos de vida como vencedor
+      vencedorId = heroi1.pontos_de_vida > heroi2.pontos_de_vida ? heroi1_id : heroi2_id;
     }
-    res
-      .status(200)
-      .json({ mensagem: "Batalha realizada com sucesso", vencedor });
+
+    // Inserir o ID do herói vencedor na tabela batalhas
+    const query = 'INSERT INTO batalhas (heroi1_id, heroi2_id, vencedor_id) VALUES ($1, $2, $3)';
+    await pool.query(query, [heroi1_id, heroi2_id, vencedorId]);
+
+    // Retorna os detalhes completos da batalha
+    res.status(200).json({
+      mensagem: "Batalha realizada com sucesso",
+      heroi1: heroi1,
+      heroi2: heroi2,
+      vencedor: vencedorId
+    });
+
   } catch (error) {
     console.error("Erro ao realizar a batalha:", error);
     res.status(500).send("Erro ao realizar a batalha");
   }
 });
+
+
+app.get("/batalhas", async (req, res) => {
+  try {
+    // Consulta ao banco de dados para obter todas as batalhas
+    const resultado = await pool.query("SELECT * FROM batalhas");
+
+    // Retorna as batalhas encontradas
+    res.status(200).json(resultado.rows);
+  } catch (error) {
+    console.error("Erro ao obter o histórico de batalhas:", error);
+    res.status(500).send("Erro ao obter o histórico de batalhas");
+  }
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Servindor rodando na porta ${PORT}🚀`);
