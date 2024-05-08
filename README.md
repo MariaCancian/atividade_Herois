@@ -1,6 +1,20 @@
 # API de Gerenciamento de Heróis - Sistema de Batalhas
 
-Esta é uma API para gerenciamento de heróis e realização de batalhas entre eles.
+Esta é uma API simples para gerenciar batalhas entre heróis.
+
+## Funcionalidades
+
+- Listar todos os heróis
+- Adicionar um novo herói
+- Atualizar um herói existente
+- Excluir um herói
+- Realizar uma batalha entre dois heróis
+- Listar todas as batalhas realizadas
+- Listar batalhas de um herói específico
+
+## Endpoints
+
+### Listar todos os heróis
 
 ## Configuração do Banco de Dados
 
@@ -12,9 +26,8 @@ A API utiliza um banco de dados PostgreSQL. Certifique-se de ter o PostgreSQL in
 CREATE TABLE herois
 ```
 #Rotas
-* GET /: Retorna uma mensagem indicando que a rota está funcionando.
+* GET /: Retorna uma mensagem indicando que a rota está funcionando. (GET /herois)
   
-* Rotas de Heróis
 
 * GET /herois: Retorna todos os heróis cadastrados.
 
@@ -38,4 +51,38 @@ CREATE TABLE herois
 * Consulte o histórico de batalhas com detalhes dos heróis usando a rota GET /batalhas/completas.
 * Filte os heróis pelo nome usando a rota GET /herois/nome/:nome.
 * Consulte as batalhas em que um herói específico participou usando a rota GET /herois/:nome/batalhas.
+
+  ## Configuração do Banco de Dados
+
+Esta API utiliza PostgreSQL como banco de dados. Certifique-se de configurar corretamente as credenciais de acesso ao banco de dados no arquivo `index.js`.
+
+## Executando a Aplicação
+
+1. Clone este repositório.
+
+2. Instale as dependências utilizando o comando: npm install
+
+ 3. Inicie o servidor com o comando: npm start
+    
+4. Acesse a API através do URL `http://localhost:3000`.
+
+## Exemplo de Uso
+
+- Listar todos os heróis: GET http://localhost:3000/herois
+  
+  - Adicionar um novo herói:
+    POST http://localhost:3000/herois
+Body:
+{
+"nome": "Batman",
+"poder": "Inteligência",
+"nivel": 10,
+"pontos_de_vida": 100
+}
+
+- Realizar uma batalha entre dois heróis:
+  GET http://localhost:3000/herois/1/2
+
+## Autor
+Maria Eduarda Cancian Silva
   
